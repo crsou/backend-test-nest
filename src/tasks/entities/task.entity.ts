@@ -1,5 +1,6 @@
+import { TaskStatus } from 'src/task-status/entities/task-status.entity';
 import { BaseEntity } from 'src/utils/base.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 
 @Entity('tasks')
 export class Task extends BaseEntity {
@@ -9,9 +10,11 @@ export class Task extends BaseEntity {
   @Column({ nullable: true })
   description: string;
 
-  @Column()
-  status: string;
-
   @Column({ type: 'date', nullable: true })
   endDate: Date;
+
+  @ManyToOne(() => TaskStatus, (taskStatus) => taskStatus.tasks, {
+    eager: true,
+  })
+  status: TaskStatus;
 }

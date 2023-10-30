@@ -1,9 +1,11 @@
 import {
   IsDateString,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
+// import { TaskStatus } from 'src/task-status/entities/task-status.entity';
 
 export class CreateTaskDto {
   @IsString()
@@ -14,11 +16,11 @@ export class CreateTaskDto {
   @IsOptional()
   description: string;
 
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  status: string;
+  status: number;
 
   @IsDateString()
   @IsOptional()
-  endDate: boolean;
+  endDate: Date;
 }
