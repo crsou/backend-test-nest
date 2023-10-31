@@ -1,6 +1,6 @@
-import { TaskStatus } from 'src/task-status/entities/task-status.entity';
-import { BaseEntity } from 'src/utils/base.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
+import { BaseEntity } from './base.entity';
+import { TaskStatus } from './task-status.entity';
 
 @Entity('tasks')
 export class Task extends BaseEntity {

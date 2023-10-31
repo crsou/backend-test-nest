@@ -4,21 +4,12 @@ import { AppService } from './app.service';
 import { TasksModule } from './tasks/tasks.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TaskStatusModule } from './task-status/task-status.module';
+import { dataSourceOptions } from './db/data-source';
 
 @Module({
   imports: [
     TasksModule,
-    TypeOrmModule.forRoot({
-      type: process.env.DB_TYPE as any,
-      host: process.env.PG_HOST,
-      port: parseInt(process.env.PG_PORT),
-      username: process.env.PG_USER,
-      password: process.env.PG_PASSWORD,
-      database: process.env.PG_DB,
-      entities: [],
-      synchronize: true,
-      autoLoadEntities: true,
-    }),
+    TypeOrmModule.forRoot(dataSourceOptions),
     TaskStatusModule,
   ],
   controllers: [AppController],

@@ -14,7 +14,7 @@ export class CreateTaskDto {
 
   @IsString()
   @IsOptional()
-  description: string;
+  description?: string;
 
   @IsNumber()
   @IsNotEmpty()
@@ -22,5 +22,5 @@ export class CreateTaskDto {
 
   @IsDateString()
   @IsOptional()
-  endDate: Date;
+  endDate?: Date;
 }

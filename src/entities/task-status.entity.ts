@@ -1,6 +1,6 @@
-import { Task } from 'src/tasks/entities/task.entity';
-import { BaseEntity } from 'src/utils/base.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
+import { BaseEntity } from './base.entity';
+import { Task } from './task.entity';
 
 // Tabela referente as colunas ou "passo" de cada task no quadro Kanban
 @Entity('task-status')
