@@ -15,15 +15,11 @@ export class TasksService {
   ) {}
 
   async create(dto: CreateTaskDto) {
-    try {
-      const status = await this.statusService.findOne(dto.status);
-      if (!status) throw new BadRequestException(TasksErrors.STATUS_NOT_FOUND);
+    const status = await this.statusService.findOne(dto.status);
+    if (!status) throw new BadRequestException(TasksErrors.STATUS_NOT_FOUND);
 
-      const newTask = this.repo.create({ ...dto, status });
-      return this.repo.save(newTask);
-    } catch (error) {
-      throw new BadRequestException(error);
-    }
+    const newTask = this.repo.create({ ...dto, status });
+    return this.repo.save(newTask);
   }
 
   findAll() {
