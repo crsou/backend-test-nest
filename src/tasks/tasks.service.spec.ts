@@ -6,6 +6,7 @@ import { TaskStatusService } from '../task-status/task-status.service';
 import { TaskStatus } from '../entities/task-status.entity';
 import { MockRepository } from '../utils/mockRepository';
 import { BadRequestException } from '@nestjs/common';
+import { TasksErrors } from './tasks.errors';
 
 describe('TasksService', () => {
   let service: TasksService;
@@ -54,13 +55,24 @@ describe('TasksService', () => {
       status: 30,
     };
 
-    // const mockError = new BadRequestException('Status not found')
+    mockStatusService.findOne.mockReturnValue(null);
 
-    mockStatusService.findOne.mockReturnValue({ id: 1, title: 'em progresso' });
-    // jest.spyOn(mockStatusService, 'findOne').mockRejectedValue(null);
+    await expect(() => service.create(newTask)).rejects.toThrow(
+      new BadRequestException(TasksErrors.STATUS_NOT_FOUND),
+    );
+  });
 
-    const result = await service.create(newTask);
+  it('should not be updated if status id is invalid', async () => {
+    const newTask = {
+      title: 'Test task',
+      description: 'Test description',
+      status: 30,
+    };
 
-    expect(result).toBeInstanceOf(BadRequestException);
+    mockStatusService.findOne.mockReturnValue(null);
+
+    await expect(() => service.update(1, newTask)).rejects.toThrow(
+      new BadRequestException(TasksErrors.STATUS_NOT_FOUND),
+    );
   });
 });
