@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task } from '../entities/task.entity';
@@ -15,6 +15,8 @@ export class TasksService {
 
   async create(dto: CreateTaskDto) {
     const status = await this.statusService.findOne(dto.status);
+    if (!status) throw new BadRequestException('Status not found');
+
     const newTask = this.repo.create({ ...dto, status });
     return this.repo.save(newTask);
   }
@@ -29,6 +31,8 @@ export class TasksService {
 
   async update(id: number, dto: UpdateTaskDto) {
     const status = await this.statusService.findOne(dto.status);
+    if (!status) throw new BadRequestException('Status not found');
+
     await this.repo.update(id, { ...dto, status });
     return this.repo.findOne({ where: { id } });
   }

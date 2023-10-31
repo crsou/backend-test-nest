@@ -1,40 +1,46 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TasksService } from './tasks.service';
-import { Repository } from 'typeorm';
 import { Task } from '../entities/task.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { TaskStatusService } from '../task-status/task-status.service';
 import { TaskStatus } from '../entities/task-status.entity';
+import { MockRepository } from '../utils/mockRepository';
+import { BadRequestException } from '@nestjs/common';
 
 describe('TasksService', () => {
   let service: TasksService;
-  let statusService: TaskStatusService;
-  let repo: Repository<Task>;
-  let statusRepo: Repository<TaskStatus>;
-
-  const repoToken = getRepositoryToken(Task);
-  const statusRepoToken = getRepositoryToken(TaskStatus);
+  let repo: MockRepository<Task>;
+  let mockStatusService: {
+    findOne: jest.Mock;
+  };
+  let statusRepo: MockRepository<TaskStatus>;
 
   beforeEach(async () => {
+    repo = new MockRepository<Task>();
+    statusRepo = new MockRepository<TaskStatus>();
+    mockStatusService = {
+      findOne: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TasksService,
-        TaskStatusService,
         {
-          provide: repoToken,
-          useClass: Repository,
+          provide: getRepositoryToken(Task),
+          useValue: repo,
         },
         {
-          provide: statusRepoToken,
-          useClass: Repository,
+          provide: getRepositoryToken(TaskStatus),
+          useValue: statusRepo,
+        },
+        {
+          provide: TaskStatusService,
+          useValue: mockStatusService,
         },
       ],
     }).compile();
 
     service = module.get<TasksService>(TasksService);
-    statusService = module.get<TaskStatusService>(TaskStatusService);
-    repo = module.get<Repository<Task>>(repoToken);
-    statusRepo = module.get<Repository<TaskStatus>>(statusRepoToken);
   });
 
   it('should be defined', () => {
@@ -48,12 +54,13 @@ describe('TasksService', () => {
       status: 30,
     };
 
-    jest.spyOn(statusService, 'findOne').mockResolvedValueOnce(undefined);
+    // const mockError = new BadRequestException('Status not found')
+
+    mockStatusService.findOne.mockReturnValue({ id: 1, title: 'em progresso' });
+    // jest.spyOn(mockStatusService, 'findOne').mockRejectedValue(null);
 
     const result = await service.create(newTask);
 
-    expect(result).toMatchObject({
-      message: 'Status not found',
-    });
+    expect(result).toBeInstanceOf(BadRequestException);
   });
 });

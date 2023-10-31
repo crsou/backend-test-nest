@@ -3,18 +3,16 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TaskStatusController } from './task-status.controller';
 import { TaskStatusService } from './task-status.service';
 import * as supertest from 'supertest';
-import { INestApplication } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { TaskStatus } from '../entities/task-status.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-
-let app: INestApplication;
 
 describe('TaskStatusController', () => {
   let controller: TaskStatusController;
   let service: TaskStatusService;
   let repo: Repository<TaskStatus>;
   const repoToken = getRepositoryToken(TaskStatus);
+  const url = 'http://localhost:3000';
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -38,12 +36,10 @@ describe('TaskStatusController', () => {
   });
 
   it('should be created', async () => {
-    const response = await supertest('http://localhost:3000')
-      .post('/task-status')
-      .send({
-        title: 'Em progresso',
-        color: '#ab9e79',
-      });
+    const response = await supertest(url).post('/task-status').send({
+      title: 'Em progresso',
+      color: '#ab9e79',
+    });
 
     expect(response.status).toBe(201);
     expect(response.body).toMatchObject({
@@ -53,12 +49,10 @@ describe('TaskStatusController', () => {
   });
 
   it('should return an error if color is not hex', async () => {
-    const response = await supertest('http://localhost:3000')
-      .post('/task-status')
-      .send({
-        title: 'Em progresso',
-        color: 'blue',
-      });
+    const response = await supertest(url).post('/task-status').send({
+      title: 'Em progresso',
+      color: 'blue',
+    });
 
     expect(response.status).toBe(400);
     expect(response.body).toEqual({
