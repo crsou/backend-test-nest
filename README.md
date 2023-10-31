@@ -2,7 +2,7 @@
 Este projeto de backend demonstra a aplicação de um quadro Kanban. Foi utilizado o framework NestJS e o banco de dados PostgresSQL, além de Docker para conteinerizar o app.
 
 ## Instalação e inicialização
-Antes de iniciar, certifique-se de o Docker está instalado e aberto.
+Antes de iniciar, certifique-se de o Docker está instalado e aberto. Se estiver pronto, use os comandos abaixo para instalar as dependências e iniciar o app.
 
 ```
 npm install
