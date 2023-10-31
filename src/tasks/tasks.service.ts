@@ -5,6 +5,7 @@ import { Task } from '../entities/task.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TaskStatusService } from '../task-status/task-status.service';
+import { TasksErrors } from './tasks.errors';
 
 @Injectable()
 export class TasksService {
@@ -14,11 +15,15 @@ export class TasksService {
   ) {}
 
   async create(dto: CreateTaskDto) {
-    const status = await this.statusService.findOne(dto.status);
-    if (!status) throw new BadRequestException('Status not found');
+    try {
+      const status = await this.statusService.findOne(dto.status);
+      if (!status) throw new BadRequestException(TasksErrors.STATUS_NOT_FOUND);
 
-    const newTask = this.repo.create({ ...dto, status });
-    return this.repo.save(newTask);
+      const newTask = this.repo.create({ ...dto, status });
+      return this.repo.save(newTask);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   findAll() {
@@ -31,7 +36,7 @@ export class TasksService {
 
   async update(id: number, dto: UpdateTaskDto) {
     const status = await this.statusService.findOne(dto.status);
-    if (!status) throw new BadRequestException('Status not found');
+    if (!status) throw new BadRequestException(TasksErrors.STATUS_NOT_FOUND);
 
     await this.repo.update(id, { ...dto, status });
     return this.repo.findOne({ where: { id } });
